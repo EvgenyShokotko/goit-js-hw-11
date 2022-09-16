@@ -8,33 +8,30 @@ export default class ImageApiService {
     this.page = 1;
   }
 
-  fetchImages() {
+  // fetchImages() {
+  //   const OPTIONS = `&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
+  //   const url = `${BASE}?key=${KEY}&q=${this.queryInput}&${OPTIONS}`;
+  //   return fetch(url)
+  //     .then(r => r.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       this.incrementPage();
+
+  //       return data.hits;
+  //     });
+  // }
+  async fetchImages() {
     const OPTIONS = `&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
-    const url = `${BASE}?key=${KEY}&q=${this.queryInput}&${OPTIONS}`;
-    return fetch(url)
-      .then(r => r.json())
-      .then(data => {
-        console.log(data);
-        this.incrementPage();
-
-        return data.hits;
-      });
-    // axios
-    //   .get(`${BASE}?key=${KEY}&q=${this.queryInput}&${OPTIONS}`)
-    //   .then(function (response) {
-    //     response.json();
-    //     console.log(response.json());
-    //     this.incrementPage();
-
-    //     return response.hits;
-    //   })
-    //   .catch(function (error) {
-    //     // handle error
-    //     console.log(error);
-    //   })
-    //   .then(function () {
-    //     // always executed
-    //   });
+    try {
+      const response = await axios.get(
+        `${BASE}?key=${KEY}&q=${this.queryInput}&${OPTIONS}`
+      );
+      this.incrementPage();
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      console.log(error.response.status);
+    }
   }
   incrementPage() {
     this.page += 1;
