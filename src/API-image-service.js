@@ -1,3 +1,7 @@
+const axios = require('axios').default;
+const BASE = 'https://pixabay.com/api/';
+const KEY = '29966398-6999e84d15bca17b916749cbf';
+
 export default class ImageApiService {
   constructor() {
     this.queryInput = '';
@@ -5,9 +9,6 @@ export default class ImageApiService {
   }
 
   fetchImages() {
-    const axios = require('axios').default;
-    const BASE = 'https://pixabay.com/api/';
-    const KEY = '29966398-6999e84d15bca17b916749cbf';
     const OPTIONS = `&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
     const url = `${BASE}?key=${KEY}&q=${this.queryInput}&${OPTIONS}`;
     return fetch(url)
@@ -19,12 +20,13 @@ export default class ImageApiService {
         return data.hits;
       });
     // axios
-    //   .get(`${BASE}?key=${KEY}&q=${queryInput}&${OPTIONS}`)
+    //   .get(`${BASE}?key=${KEY}&q=${this.queryInput}&${OPTIONS}`)
     //   .then(function (response) {
-    //     // handle success
-    //     //   if (condition) {
-    //     //   }
-    //     console.log(response);
+    //     response.json();
+    //     console.log(response.json());
+    //     this.incrementPage();
+
+    //     return response.hits;
     //   })
     //   .catch(function (error) {
     //     // handle error
