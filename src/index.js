@@ -14,7 +14,9 @@ function onSearchFormClick(event) {
   event.preventDefault();
   btnLoadMore.disabled = false;
   imageApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
+  console.log(event.currentTarget.elements.searchQuery.value);
   if (imageApiService.searchQuery.trim() === '') {
+    btnLoadMore.disabled = true;
     return Notiflix.Notify.info(
       'The field can not be empty.Input something to start'
     );
@@ -29,7 +31,7 @@ function onSearchFormClick(event) {
     }
     if (loadedAll.hits.length === 0) {
       Notiflix.Notify.failure(
-        'OPPS, we didnt find anything. Try to input something else..'
+        `OPPS, we didnt find anything about "${imageApiService.searchQuery}". Try to input something else..`
       );
     }
 
