@@ -1,18 +1,18 @@
 import Notiflix from 'notiflix';
 
 import { TEMPLATE } from './template-strings';
+import { form, btnLoadMore, gallery } from './const';
 import ImageApiService from './API-image-service';
-
-const form = document.querySelector('.search-form');
-const btnLoadMore = document.querySelector('.load-more');
-const gallery = document.querySelector('.gallery');
-const imageApiService = new ImageApiService();
 
 form.addEventListener('submit', onSearchFormClick);
 btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
+btnLoadMore.disabled = true;
+
+const imageApiService = new ImageApiService();
 
 function onSearchFormClick(event) {
   event.preventDefault();
+  btnLoadMore.disabled = false;
   imageApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
   if (imageApiService.searchQuery.trim() === '') {
     return Notiflix.Notify.info(
@@ -27,23 +27,31 @@ function onSearchFormClick(event) {
         `We found ${loadedAll.total} images, but you can watch free only ${loadedAll.totalHits}`
       );
     }
-    const loadedImg = loadedAll.hits;
-    if (loadedImg.length === 0) {
+    if (loadedAll.hits.length === 0) {
       Notiflix.Notify.failure(
         'OPPS, we didnt find anything. Try to input something else..'
       );
     }
+
     clearConteiner();
-    renderCardsHtml(loadedImg);
+    sameCodeInParams(loadedAll);
   });
 }
 
 function onBtnLoadMoreClick() {
   imageApiService.fetchImages().then(loadedAll => {
-    const loadedImg = loadedAll.hits;
-    renderCardsHtml(loadedImg);
+    sameCodeInParams(loadedAll);
   });
 }
+
+function sameCodeInParams(loadedAll) {
+  const loadedImg = loadedAll.hits;
+  const totalPicture = loadedAll.totalHits;
+  imageApiService.countRemainPages(totalPicture);
+
+  renderCardsHtml(loadedImg);
+}
+
 function renderCardsHtml(loadedImg) {
   gallery.insertAdjacentHTML('beforeend', TEMPLATE(loadedImg));
 }

@@ -1,11 +1,14 @@
 const axios = require('axios').default;
 const BASE = 'https://pixabay.com/api/';
 const KEY = '29966398-6999e84d15bca17b916749cbf';
+import { btnLoadMore } from './const';
 
 export default class ImageApiService {
   constructor() {
     this.queryInput = '';
     this.page = 1;
+    this.picturesPerPage = 40;
+    this.remainPages = 0;
   }
 
   // fetchImages() {
@@ -36,8 +39,16 @@ export default class ImageApiService {
   incrementPage() {
     this.page += 1;
   }
+  countRemainPages(totalPicture) {
+    this.remainPages =
+      Math.ceil(totalPicture / this.picturesPerPage) - this.page;
+    if (this.remainPages < 0) {
+      btnLoadMore.disabled = true;
+    }
+  }
   resetPage() {
     this.page = 1;
+    this.remainPages = 0;
   }
   get searchQuery() {
     return this.queryInput;

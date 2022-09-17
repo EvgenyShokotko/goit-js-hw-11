@@ -12,7 +12,7 @@ const galeryCard = `
           <b>Views:{{views}}</b>
         </p>
         <p class="info-item">
-          <b>Comments;{{comments}}</b>
+          <b>Comments:{{comments}}</b>
         </p>
         <p class="info-item">
           <b>Downloads:{{downloads}}</b>
@@ -22,3 +22,6 @@ const galeryCard = `
 {{/each}}`;
 
 export const TEMPLATE = Handlebars.compile(galeryCard);
+
+export const LAST_STRING = `        
+<p class="info-item"> We're sorry, but you've reached the end of search results. </p>`;
