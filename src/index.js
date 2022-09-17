@@ -1,5 +1,8 @@
 import Notiflix from 'notiflix';
 
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 import { TEMPLATE } from './template-strings';
 import { form, btnLoadMore, gallery } from './const';
 import ImageApiService from './API-image-service';
@@ -43,14 +46,25 @@ function onSearchFormClick(event) {
 function onBtnLoadMoreClick() {
   imageApiService.fetchImages().then(loadedAll => {
     sameCodeInParams(loadedAll);
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
   });
 }
 
 function sameCodeInParams(loadedAll) {
   const loadedImg = loadedAll.hits;
-  const totalPicture = loadedAll.totalHits;
-  imageApiService.countRemainPages(totalPicture);
-
+  if (loadedImg.length < 40 && loadedImg.length > 0) {
+    btnLoadMore.disabled = true;
+    Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
   renderCardsHtml(loadedImg);
 }
 
