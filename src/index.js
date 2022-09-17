@@ -37,7 +37,6 @@ function onSearchFormClick(event) {
         `OPPS, we didnt find anything about "${imageApiService.searchQuery}". Try to input something else..`
       );
     }
-
     clearConteiner();
     sameCodeInParams(loadedAll);
   });
@@ -46,6 +45,7 @@ function onSearchFormClick(event) {
 function onBtnLoadMoreClick() {
   imageApiService.fetchImages().then(loadedAll => {
     sameCodeInParams(loadedAll);
+
     const { height: cardHeight } = document
       .querySelector('.gallery')
       .firstElementChild.getBoundingClientRect();
@@ -70,7 +70,19 @@ function sameCodeInParams(loadedAll) {
 
 function renderCardsHtml(loadedImg) {
   gallery.insertAdjacentHTML('beforeend', TEMPLATE(loadedImg));
+  onSliderMake();
 }
 function clearConteiner() {
   gallery.innerHTML = '';
+}
+function onSliderMake() {
+  const lightbox = new SimpleLightbox('.gallery a', {
+    close: true,
+    showCounter: true,
+    preloading: true,
+    enableKeyboard: true,
+    docClose: true,
+    disableScroll: true,
+  });
+  lightbox.refresh();
 }
