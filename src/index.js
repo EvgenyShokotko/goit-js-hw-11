@@ -1,11 +1,11 @@
 import Notiflix from 'notiflix';
-
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-import { TEMPLATE } from './template-strings';
-import { form, btnLoadMore, gallery } from './const';
+import { TEMPLATE, lastImg } from './template-strings';
+import { form, btnLoadMore, gallery, sentinel } from './const';
 import ImageApiService from './API-image-service';
+import { onSliderMake } from './simple-light-box';
 
 form.addEventListener('submit', onSearchFormClick);
 btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
@@ -14,6 +14,7 @@ btnLoadMore.disabled = true;
 const imageApiService = new ImageApiService();
 
 function onSearchFormClick(event) {
+  observer.observe(sentinel);
   event.preventDefault();
   btnLoadMore.disabled = false;
   imageApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
@@ -24,7 +25,6 @@ function onSearchFormClick(event) {
       'The field can not be empty.Input something to start'
     );
   }
-
   imageApiService.resetPage();
   imageApiService.fetchImages().then(loadedAll => {
     if (loadedAll.total >= 1) {
@@ -60,10 +60,9 @@ function onBtnLoadMoreClick() {
 function sameCodeInParams(loadedAll) {
   const loadedImg = loadedAll.hits;
   if (loadedImg.length < 40 && loadedImg.length > 0) {
+    observer.unobserve(sentinel);
     btnLoadMore.disabled = true;
-    Notiflix.Notify.info(
-      "We're sorry, but you've reached the end of search results."
-    );
+    sentinel.innerHTML = lastImg;
   }
   renderCardsHtml(loadedImg);
 }
@@ -72,17 +71,25 @@ function renderCardsHtml(loadedImg) {
   gallery.insertAdjacentHTML('beforeend', TEMPLATE(loadedImg));
   onSliderMake();
 }
+
 function clearConteiner() {
   gallery.innerHTML = '';
+  sentinel.innerHTML = '';
 }
-function onSliderMake() {
-  const lightbox = new SimpleLightbox('.gallery a', {
-    close: true,
-    showCounter: true,
-    preloading: true,
-    enableKeyboard: true,
-    docClose: true,
-    disableScroll: true,
+
+// Infinity Scroll
+const observer = new IntersectionObserver(callbackInfinity, {
+  rootMargin: '250px',
+});
+
+function callbackInfinity(entries) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && imageApiService.searchQuery.trim() !== '') {
+      imageApiService.fetchImages().then(loadedAll => {
+        sameCodeInParams(loadedAll);
+      });
+    }
   });
-  lightbox.refresh();
 }
+
+observer.observe(sentinel);

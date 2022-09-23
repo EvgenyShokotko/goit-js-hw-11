@@ -24,3 +24,6 @@ const galeryCard = `
 {{/each}}`;
 
 export const TEMPLATE = Handlebars.compile(galeryCard);
+
+export const lastImg =
+  '<p class = "last-notification">We are sorry, but you have reached the end of search results.</p>';
